@@ -13,7 +13,7 @@ class App extends Component {
     todos: [
         { id: 1, label: 'Изучить HTML, CSS', completed: true, editing: false, time: new Date() },
         { id: 2, label: 'Изучить JS', completed: true, editing: false, time: new Date() },
-        { id: 3, label: 'Изучить React', completed: false, editing: false, time: new Date() }ыафа
+        { id: 3, label: 'Изучить React', completed: false, editing: false, time: new Date() }{}{ }ю.
     ],
     filter: 'all'
 };
