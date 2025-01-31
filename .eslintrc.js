@@ -27,7 +27,8 @@ module.exports = {
         version: "detect",
      },
     },
-   rules: {
+    rules: {
+      "import/no-unresolved": ["error", { caseSensitive: false }],
       "react/prop-types": "off",
-   },
+      },
 };
