@@ -39,5 +39,8 @@ class Footer extends Component {
     );
   }
 }
-
+function myFunc(x, y) {
+  return x + y;
+}
+myFunc();
 export default Footer;
