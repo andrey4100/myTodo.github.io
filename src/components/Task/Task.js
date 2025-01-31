@@ -68,8 +68,8 @@ class Task extends React.Component {
             id={`${this.props.id}`}
           />
           <label>
-            <button onClick={this.onClickTask}></button>
             <span className="description">{label}</span>
+            <button onClick={this.onClickTask}></button>
             <span className="created">{createdAgo}</span>
           </label>
           <button className="icon icon-edit" onClick={onEdit}></button>
