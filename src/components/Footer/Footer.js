@@ -1,11 +1,18 @@
 import { Component } from 'react';
-
+import PropTypes from 'prop-types';
 
 import TaskFilter from '../TaskFilter';
 
 import './Footer.css';
 
 class Footer extends Component {
+
+  static propTypes = {
+    todos: PropTypes.arrayOf(PropTypes.object),
+    filter: PropTypes.oneOf(['all', 'active', 'completed']),
+    onFilterChange: PropTypes.func,
+    onClearCompleted: PropTypes.func,
+  };
 
   // Метод для проверки наличия завершенных задач
   hasCompletedTodos = () => {

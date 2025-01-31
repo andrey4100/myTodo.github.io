@@ -1,9 +1,13 @@
 import { Component } from 'react';
-
+import PropTypes from 'prop-types';
 
 import './NewTaskForm.css';
 
 class NewTaskForm extends Component {
+
+  static propTypes = {
+    onAddTask: PropTypes.func,
+  };
 
   // Инициализируем состояние для текстового поля
   state = { text: "" };

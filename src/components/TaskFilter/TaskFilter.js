@@ -1,10 +1,15 @@
 import { Component } from 'react';
-
+import PropTypes from 'prop-types';
 
 import './TaskFilter.css';
 
 class TaskFilter extends Component {
-  
+
+  static propTypes = {
+    filter: PropTypes.oneOf(['all', 'active', 'completed']),
+    onFilterChange: PropTypes.func,
+  };
+
   render() {
     const { filter, onFilterChange } = this.props;
     

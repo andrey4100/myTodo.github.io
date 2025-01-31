@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { formatDistanceToNow } from 'date-fns';
 import { ru } from 'date-fns/locale';
@@ -6,6 +7,25 @@ import { ru } from 'date-fns/locale';
 import './Task.css';
 
 class Task extends React.Component {
+
+  static defaultProps = {
+    onToggleCompleted: () => {},
+    onEdit: () => {},
+    onDelete: () => {},
+    onLabelChange: () => {},
+  };
+
+  static propTypes = {
+    id: PropTypes.number,
+    label: PropTypes.string,
+    completed: PropTypes.bool,
+    editing: PropTypes.bool,
+    time: PropTypes.instanceOf(Date),
+    onToggleCompleted: PropTypes.func,
+    onEdit: PropTypes.func,
+    onDelete: PropTypes.func,
+    onLabelChange: PropTypes.func,
+};
 
   // Инициализация состояния компонента
   state = { newLabel: this.props.label };

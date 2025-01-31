@@ -7,6 +7,7 @@ import Footer from '../Footer';
 import './App.css';
 
 class App extends Component {
+
   // Инициализируем состояние компонента
   state = {
     todos: [

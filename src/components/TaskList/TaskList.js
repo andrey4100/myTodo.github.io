@@ -1,11 +1,27 @@
 import { Component } from 'react';
-
+import PropTypes from 'prop-types';
 
 import './TaskList.css';
 
 import Task from '../Task';
 
 class TaskList extends Component {
+
+
+  static defaultProps = {
+    onToggleCompleted: () => {},
+    onEdit: () => {},
+    onDelete: () => {},
+    onLabelChange: () => {},
+  };
+
+  static propTypes = {
+    todos: PropTypes.arrayOf(PropTypes.object),
+    onToggleCompleted: PropTypes.func,
+    onEdit: PropTypes.func,
+    onDelete: PropTypes.func,
+    onLabelChange: PropTypes.func,
+};
 
   render(){
     const { todos, onToggleCompleted, onEdit, onDelete, onLabelChange } = this.props;
