@@ -1,49 +1,44 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import { Component } from 'react';
+
 
 import './NewTaskForm.css';
 
-class NewTaskForm extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      value: '',
+class NewTaskForm extends Component {
+
+  // Инициализируем состояние для текстового поля
+  state = { text: "" };
+
+    // Метод для обработки отправки формы
+    onSubmit = (e) => {
+      e.preventDefault(); // Предотвращаем перезагрузку страницы
+      if (this.state.text.trim()) {
+         // Вызываем метод onAddTask, для добавления задачи
+          this.props.onAddTask(this.state.text);
+           // Очищаем текстовое поле
+          this.setState({ text: "" });
+      }
+  };
+
+      // Метод для обработки изменения текстового поля
+      onLabelChange = (e) => {
+        this.setState({ text: e.target.value });
     };
-  }
+
 
   render() {
-    const { placeholder, title, addItem } = this.props;
-    const handleSubmit = (event) => {
-      event.preventDefault();
-      if (this.state.value.trim()) addItem(this.state.value);
-      this.setState({ value: '' });
-    };
+
     return (
-      <form onSubmit={handleSubmit} className="header">
-        <h1>{title}</h1>
-        <label>
-          Todo
-          <input
+      <form onSubmit={this.onSubmit} className="new-todo-form" >
+        <input
             className="new-todo"
-            placeholder={placeholder}
-            onChange={(event) => this.setState({ value: event.target.value })}
-            value={this.state.value}
-          />
-        </label>
+            type="text"
+            placeholder="What needs to be done?"
+            value={this.state.text}
+            onChange={this.onLabelChange}
+        />
       </form>
     );
   }
 }
-
-NewTaskForm.propTypes = {
-  placeholder: PropTypes.string,
-  title: PropTypes.string,
-  addItem: PropTypes.func.isRequired,
-};
-
-NewTaskForm.defaultProps = {
-  placeholder: 'What needs to be done?',
-  title: 'Todos',
-};
 
 export default NewTaskForm;

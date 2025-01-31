@@ -1,89 +1,72 @@
 import React from 'react';
+
 import { formatDistanceToNow } from 'date-fns';
-import KG from 'date-fns/locale/en-AU';
-import PropTypes from 'prop-types';
+import { ru } from 'date-fns/locale';
 
 import './Task.css';
 
 class Task extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      editing: false,
-      value: '',
-    };
-  }
 
-  handleSubmit(event) {
-    event.preventDefault();
-    const {
-      editItem,
-      todo: { id },
-    } = this.props;
-    editItem(id, this.state.value);
-    this.setState({ value: '' });
-    this.setState({ editing: false });
-  }
+  // Инициализация состояния компонента
+  state = { newLabel: this.props.label };
+
+  // Обработка отправки формы редактирования
+  editSubmit = (e) => {
+    e.preventDefault();
+    if (this.state.newLabel.trim()) {
+        this.props.onLabelChange(this.state.newLabel); // Сохраняем значение
+         this.props.onEdit(); //Переключаем состояние редактирования через пропс
+    }
+};
+
+  // Метод для обработки изменения текстового поля во время редактирования
+  editChange = (e) => this.setState({ newLabel: e.target.value });
+
+  // Метод для обработки нажатия клавиши "Enter"
+  onKeyDown = (e) => {
+    if (e.key === 'Enter') {
+        this.editSubmit(e);
+    }
+  };
+  // Метод для обработки клика на таску
+  onClickTask = () => {
+  this.props.onToggleCompleted(this.props.id);
+};
 
   render() {
-    const { changeCheck, todo, deleteItem } = this.props;
-    const { body, id, checked, date } = todo;
+    const { label, completed, editing, time, onToggleCompleted, onEdit, onDelete } = this.props;
+    const createdAgo = formatDistanceToNow(time, { addSuffix: true, locale: ru });
+    const { newLabel } = this.state;
+    
     return (
-      <li className={checked ? 'completed' : this.state.editing ? 'editing' : null}>
+      <li className={`${completed ? 'completed' : ''} ${editing ? 'editing' : ''}`}>
         <div className="view">
           <input
-            id={id}
             className="toggle"
             type="checkbox"
-            onChange={(event) => changeCheck(id, event.target.checked)}
-            checked={checked}
+            checked={completed}
+            onChange={onToggleCompleted}
+            id={`${this.props.id}`}
           />
-          <label htmlFor={id}>
-            <span className="description">{body}</span>
-            <span className="created">
-              {`created ${formatDistanceToNow(date, {
-                includeSeconds: true,
-                locale: KG,
-                addSuffix: true,
-              })}`}
+          <label onClick={this.onClickTask}>
+            <span className="description" >
+              {label}
             </span>
+            <span className="created">{createdAgo}</span>
           </label>
-          <button
-            type="button"
-            onClick={() => this.setState(({ editing }) => ({ editing: !editing, value: this.props.todo.body }))}
-            className="icon icon-edit"
-          />
-          <button type="button" onClick={() => deleteItem(id)} className="icon icon-destroy" />
+          <button className="icon icon-edit" onClick={onEdit}></button>
+          <button className="icon icon-destroy" onClick={onDelete}></button>
         </div>
-        {this.state.editing && (
-          <form onSubmit={this.handleSubmit.bind(this)}>
-            <input
-              onChange={(event) => this.setState({ value: event.target.value })}
-              type="text"
-              className="edit"
-              value={this.state.value}
-            />
-          </form>
-        )}
+        <input
+          type="text"
+          className="edit"
+          value={newLabel}
+          onChange={this.editChange}
+          onKeyDown={this.onKeyDown}
+      />
       </li>
     );
   }
 }
-
-Task.propTypes = {
-  todo: PropTypes.shape({
-    id: PropTypes.number,
-    body: PropTypes.string,
-    checked: PropTypes.bool,
-    date: PropTypes.instanceOf(Date),
-  }),
-  deleteItem: PropTypes.func.isRequired,
-  changeCheck: PropTypes.func.isRequired,
-  editItem: PropTypes.func.isRequired,
-};
-
-Task.defaultProps = {
-  todo: {},
-};
 
 export default Task;

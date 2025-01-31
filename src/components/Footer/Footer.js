@@ -1,35 +1,38 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import { Component } from 'react';
 
-import TaskFilter from './TaskFilter';
+
+import TaskFilter from '../TaskFilter';
 
 import './Footer.css';
 
-class Footer extends React.Component {
+class Footer extends Component {
+
+  // Метод для проверки наличия завершенных задач
+  hasCompletedTodos = () => {
+    const { todos } = this.props;
+    return todos.filter(todo => todo.completed).length > 0;
+  };
+
   render() {
-    const { lefts, clearCompleted, changeFilter, filter } = this.props;
+
+    const { todos, filter, onFilterChange, onClearCompleted } = this.props;
+    const itemsLeft = todos.filter(todo => !todo.completed).length;
+    const hasCompleted = this.hasCompletedTodos();
+
     return (
       <footer className="footer">
-        <span className="todo-count">{lefts} items left</span>
-        <TaskFilter filter={filter} changeFilter={changeFilter} />
-        <button type="button" onClick={clearCompleted} className="clear-completed">
+        <span className="todo-count">{itemsLeft} items left</span>
+        <TaskFilter filter={filter} onFilterChange={onFilterChange}/>
+        <button 
+          className="clear-completed"
+          onClick={hasCompleted ? onClearCompleted : undefined}
+          disabled={!hasCompleted}
+          >
           Clear completed
         </button>
       </footer>
     );
   }
 }
-
-Footer.propTypes = {
-  lefts: PropTypes.number,
-  clearCompleted: PropTypes.func.isRequired,
-  changeFilter: PropTypes.func.isRequired,
-  filter: PropTypes.string,
-};
-
-Footer.defaultProps = {
-  lefts: 0,
-  filter: 'All',
-};
 
 export default Footer;

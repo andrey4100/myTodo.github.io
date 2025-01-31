@@ -1,88 +1,112 @@
 import React, { Component } from 'react';
 
-import TaskList from '../TaskList';
 import NewTaskForm from '../NewTaskForm';
+import TaskList from '../TaskList';
 import Footer from '../Footer';
 
 import './App.css';
 
 class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      todos: [],
-      filter: 'All',
+  // Инициализируем состояние компонента
+  state = {
+    todos: [
+        { id: 1, label: 'Изучить HTML, CSS', completed: true, editing: false, time: new Date() },
+        { id: 2, label: 'Изучить JS', completed: true, editing: false, time: new Date() },
+        { id: 3, label: 'Изучить React', completed: false, editing: false, time: new Date() }
+    ],
+    filter: 'all'
+};
+    // Метод для добавления новой задачи (стрелочная функция, чтобы не ипользовать "bind")
+    addTask = (label) => {
+      const newTask = {
+        id: Date.now(),
+        label,
+        completed: false,
+        editing: false,
+        time: new Date()
+      };
+      this.setState(prevState => ({ todos: [...prevState.todos, newTask] }));
     };
-  }
 
-  addItem(value) {
-    const data = {
-      id: this.state.todos.length + 1,
-      body: value,
-      checked: false,
-      date: new Date(),
-    };
-    this.setState(({ todos }) => ({ todos: [...todos, data] }));
-  }
-
-  deleteItem(ident) {
-    this.setState(({ todos }) => ({
-      todos: todos.filter(({ id }) => id !== ident),
+    // Метод для переключения статуса выполнения задачи
+  toggleCompleted = (id) => {
+    this.setState(prevState => ({
+      todos: prevState.todos.map(todo =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
     }));
-  }
+  };
 
-  changeCheck(ident, data) {
-    this.setState(({ todos }) => ({
-      todos: todos.map((element) => {
-        if (ident === element.id) element.checked = data;
-        return element;
-      }),
+    // Метод для переключения статуса редактирования задачи
+  editTask = (id) => {
+    this.setState(prevState => ({
+        todos: prevState.todos.map(todo =>
+            todo.id === id ? {...todo, editing: !todo.editing} : todo
+        )
     }));
-  }
+  };
 
-  editItem(ident, text) {
-    this.setState(({ todos }) => ({
-      todos: todos.map((element) => {
-        if (element.id === ident) element.body = text;
-        return element;
-      }),
+  // Метод для удаления задачи
+  deleteTask = (id) => {
+    this.setState(prevState => ({ todos: prevState.todos.filter(todo => 
+        todo.id !== id) }));
+  };
+
+  // Метод для изменения текста таски
+  changeTaskLabel = (id, newLabel) => this.setState(prevState => ({
+        todos: prevState.todos.map(todo =>
+            todo.id === id ? {...todo, label: newLabel} : todo
+        )
     }));
-  }
 
-  filteredItems() {
-    const { todos, filter } = this.state;
-    return todos.filter(({ checked }) => {
-      const all = filter === 'All';
-      const completed = filter === 'Completed';
-      return all ? true : completed ? checked === true : checked === false;
-    });
-  }
+  // Метод для изменения фильтра
+  setFilter = (filter) => {
+    this.setState({ filter });
+  };
+  
+  // Метод для очистки завершенных задач
+  removeCompletedTasks = () => {
+    this.setState(prevState => ({ todos: prevState.todos.filter(todo => !todo.completed) }));
+  };
 
-  clearCompleted() {
-    this.setState(({ todos }) => ({ todos: todos.filter((element) => !element.checked) }));
-  }
-
-  changeFilter(data) {
-    this.setState({ filter: data });
-  }
+    // Метод для фильтрации задач
+    getFilteredTodos = () => {
+      const { todos, filter } = this.state;
+      if (filter === 'active') {
+          return todos.filter(todo => !todo.completed);
+      }
+      if (filter === 'completed') {
+        return todos.filter(todo => todo.completed);
+      } 
+      return todos;
+  };
 
   render() {
+
+    const filteredTodos = this.getFilteredTodos();
+
     return (
-      <div className="todoapp">
-        <NewTaskForm title="Todos" placeholder="What needs to be done?" addItem={this.addItem.bind(this)} />
-        <TaskList
-          changeCheck={this.changeCheck.bind(this)}
-          editItem={this.editItem.bind(this)}
-          deleteItem={this.deleteItem.bind(this)}
-          todos={this.filteredItems()}
-        />
-        <Footer
-          changeFilter={this.changeFilter.bind(this)}
-          clearCompleted={this.clearCompleted.bind(this)}
-          lefts={this.state.todos.filter(({ checked }) => !checked).length}
+      <section className="todoapp">
+        <header className="header">
+          <h1>Todos</h1>
+          <NewTaskForm onAddTask={this.addTask}/>
+        </header>
+        <section className="main">
+          <TaskList
+            todos={filteredTodos}
+            onToggleCompleted={this.toggleCompleted}
+            onEdit={this.editTask}
+            onDelete={this.deleteTask}
+            onLabelChange={this.changeTaskLabel}
+          />
+          <Footer
+          todos={this.state.todos}
           filter={this.state.filter}
-        />
-      </div>
+          onFilterChange={this.setFilter}
+          onClearCompleted={this.removeCompletedTasks}
+          />
+        </section>
+      </section>
     );
   }
 }
