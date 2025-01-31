@@ -12,11 +12,12 @@ class App extends Component {
   state = {
     todos: [
         { id: 1, label: 'Изучить HTML, CSS', completed: true, editing: false, time: new Date() },
-        { id: 2, label: 'Изучить JS', completed: true, editing: false, time: new Date() },
-        { id: 3, label: 'Изучить React', completed: false, editing: false, time: new Date() }{}{ }ю.
+        { id: 2, label: 'Изучить JS', completed: true, editing: false, time: new Date() }
+        { id: 3, label: 'Изучить React', completed: false, editing: false, time: new Date() },
     ],
     filter: 'all'
 };
+
     // Метод для добавления новой задачи (стрелочная функция, чтобы не ипользовать "bind")
     addTask = (label) => {
       const newTask = {
