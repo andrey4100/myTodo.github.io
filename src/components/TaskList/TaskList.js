@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import './TaskList.css';
@@ -6,8 +6,6 @@ import './TaskList.css';
 import Task from '../Task';
 
 class TaskList extends Component {
-
-
   static defaultProps = {
     onToggleCompleted: () => {},
     onEdit: () => {},
@@ -21,26 +19,25 @@ class TaskList extends Component {
     onEdit: PropTypes.func,
     onDelete: PropTypes.func,
     onLabelChange: PropTypes.func,
-};
+  };
 
-  render(){
+  render() {
     const { todos, onToggleCompleted, onEdit, onDelete, onLabelChange } = this.props;
     return (
       <ul className="todo-list">
-      {todos.map(todo => (
+        {todos.map((todo) => (
           <Task
-              key={todo.id}
-              {...todo}
-              onToggleCompleted={() => onToggleCompleted(todo.id)}
-              onEdit={() => onEdit(todo.id)}
-              onDelete={() => onDelete(todo.id)}
-              onLabelChange={(newLabel) => onLabelChange(todo.id, newLabel)}
+            key={todo.id}
+            {...todo}
+            onToggleCompleted={() => onToggleCompleted(todo.id)}
+            onEdit={() => onEdit(todo.id)}
+            onDelete={() => onDelete(todo.id)}
+            onLabelChange={(newLabel) => onLabelChange(todo.id, newLabel)}
           />
-      ))}
-  </ul>
-  );
+        ))}
+      </ul>
+    );
+  }
 }
-}
-
 
 export default TaskList;

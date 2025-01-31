@@ -7,7 +7,6 @@ import { ru } from 'date-fns/locale';
 import './Task.css';
 
 class Task extends React.Component {
-
   static defaultProps = {
     onToggleCompleted: () => {},
     onEdit: () => {},
@@ -25,7 +24,7 @@ class Task extends React.Component {
     onEdit: PropTypes.func,
     onDelete: PropTypes.func,
     onLabelChange: PropTypes.func,
-};
+  };
 
   // Инициализация состояния компонента
   state = { newLabel: this.props.label };
@@ -34,10 +33,10 @@ class Task extends React.Component {
   editSubmit = (e) => {
     e.preventDefault();
     if (this.state.newLabel.trim()) {
-        this.props.onLabelChange(this.state.newLabel); // Сохраняем значение
-         this.props.onEdit(); //Переключаем состояние редактирования через пропс
+      this.props.onLabelChange(this.state.newLabel); // Сохраняем значение
+      this.props.onEdit();
     }
-};
+  };
 
   // Метод для обработки изменения текстового поля во время редактирования
   editChange = (e) => this.setState({ newLabel: e.target.value });
@@ -45,19 +44,19 @@ class Task extends React.Component {
   // Метод для обработки нажатия клавиши "Enter"
   onKeyDown = (e) => {
     if (e.key === 'Enter') {
-        this.editSubmit(e);
+      this.editSubmit(e);
     }
   };
-  // Метод для обработки клика на таску
+
   onClickTask = () => {
-  this.props.onToggleCompleted(this.props.id);
-};
+    this.props.onToggleCompleted(this.props.id);
+  };
 
   render() {
     const { label, completed, editing, time, onToggleCompleted, onEdit, onDelete } = this.props;
     const createdAgo = formatDistanceToNow(time, { addSuffix: true, locale: ru });
     const { newLabel } = this.state;
-    
+
     return (
       <li className={`${completed ? 'completed' : ''} ${editing ? 'editing' : ''}`}>
         <div className="view">
@@ -68,22 +67,15 @@ class Task extends React.Component {
             onChange={onToggleCompleted}
             id={`${this.props.id}`}
           />
-          <label onClick={this.onClickTask}>
-            <span className="description" >
-              {label}
-            </span>
+          <label>
+            <button onClick={this.onClickTask}></button>
+            <span className="description">{label}</span>
             <span className="created">{createdAgo}</span>
           </label>
           <button className="icon icon-edit" onClick={onEdit}></button>
           <button className="icon icon-destroy" onClick={onDelete}></button>
         </div>
-        <input
-          type="text"
-          className="edit"
-          value={newLabel}
-          onChange={this.editChange}
-          onKeyDown={this.onKeyDown}
-      />
+        <input type="text" className="edit" value={newLabel} onChange={this.editChange} onKeyDown={this.onKeyDown} />
       </li>
     );
   }

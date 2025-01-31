@@ -30,5 +30,9 @@ module.exports = {
     rules: {
       "import/no-unresolved": "off",
        "react/prop-types": "off",
+       "no-empty-function": "off",
+       "@typescript-eslint/no-empty-function": "off",
+       "@angular-eslint/no-empty-lifecycle-method": "off",
+       'jsx-a11y/click-events-have-key-events': 'off'
      },
 };
