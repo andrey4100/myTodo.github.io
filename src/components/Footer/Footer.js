@@ -10,7 +10,6 @@ class Footer extends Component {
     todos: PropTypes.arrayOf(PropTypes.object),
     filter: PropTypes.oneOf(['all', 'active', 'completed']),
     onFilterChange: PropTypes.func,
-
     onClearCompleted: PropTypes.func,
   };
 
