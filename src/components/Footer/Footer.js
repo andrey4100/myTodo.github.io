@@ -9,23 +9,13 @@ class Footer extends Component {
   static propTypes = {
     todos: PropTypes.arrayOf(PropTypes.object),
     filter: PropTypes.oneOf(['all', 'active', 'completed']),
-
     onFilterChange: PropTypes.func,
-
     onClearCompleted: PropTypes.func,
-
-
-
-
   };
 
   // Метод для проверки наличия завершенных задач
   hasCompletedTodos = () => {
     const { todos } = this.props;
-
-
-
-    
     return todos.filter((todo) => todo.completed).length > 0;
   };
 
