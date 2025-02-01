@@ -10,9 +10,9 @@ class App extends Component {
   // Инициализируем состояние компонента
   state = {
     todos: [
-      { id: 1, label: 'Изучить HTML, CSS', completed: true, editing: false, time: new Date() },
-      { id: 2, label: 'Изучить JS', completed: true, editing: false, time: new Date() },
-      { id: 3, label: 'Изучить React', completed: false, editing: false, time: new Date() },
+      { id: 1, label: 'HTML, CSS', completed: true, editing: false, time: new Date() },
+      { id: 2, label: 'JS', completed: true, editing: false, time: new Date() },
+      { id: 3, label: 'React', completed: false, editing: false, time: new Date() },
     ],
     filter: 'all',
   };
