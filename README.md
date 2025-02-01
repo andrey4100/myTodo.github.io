@@ -1,6 +1,8 @@
-# todo
+# myTodo
 
-GIT Pages: https://andrey4100.github.io/todo.github.io/
+Приложение на Vercel: 
+
+GIT Pages: https://andrey4100.github.io/myTodo.github.io/
 
 
 
