@@ -1,7 +1,7 @@
 {
   "name": "todo",
   "version": "0.1.0",
-  "homepage": "https://andrey4100.github.io/todo",
+  "homepage": "https://andrey4100.github.io/myTodo.github.io",
   "private": false,
   "dependencies": {
     "cra-template": "1.2.0",
