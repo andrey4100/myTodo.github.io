@@ -1,7 +1,7 @@
 {
   "name": "todo",
   "version": "0.1.0",
-  "private": false,
+  "private": true,
   "dependencies": {
     "cra-template": "1.2.0",
     "date-fns": "^4.1.0",
@@ -15,14 +15,17 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint src/**/*.{js,jsx}",
+    "lint": "eslint src/**/*.js",
+    "lint:fix": "eslint src/**/*.js --fix",
+    "format": "prettier --write src/**/*.js",
     "deploy": "gh-pages -d build",
     "prepare": "husky"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
+      "npm run format",
+      "npm run lint:fix",
+      "git add"
     ]
   },
   "eslintConfig": {
@@ -62,5 +65,10 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.4.3",
     "prettier": "^3.4.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
