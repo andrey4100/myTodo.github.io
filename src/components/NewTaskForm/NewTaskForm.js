@@ -1,45 +1,59 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import './NewTaskForm.css';
 
-class NewTaskForm extends Component {
-  static propTypes = {
+const NewTaskForm = ({ onAddTask }) => {
+
+  NewTaskForm.propTypes = {
     onAddTask: PropTypes.func,
   };
+  
 
-  // Инициализируем состояние для текстового поля
-  state = { text: '' };
+  const [text, setText] = useState('');
+  const [minutes, setMinutes] = useState('');
+  const [seconds, setSeconds] = useState('');
 
-  // Метод для обработки отправки формы
-  onSubmit = (e) => {
-    e.preventDefault(); // Предотвращаем перезагрузку страницы
-    if (this.state.text.trim()) {
-      // Вызываем метод onAddTask, для добавления задачи
-      this.props.onAddTask(this.state.text);
-      // Очищаем текстовое поле
-      this.setState({ text: '' });
+  const onSubmit = (e) => {
+    e.preventDefault();
+    if (text.trim()) {
+      // eslint-disable-next-line radix
+      const totalSeconds = parseInt(minutes || 0) * 60 + parseInt(seconds || 0);
+      onAddTask(text, totalSeconds);
+      setText('');
+      setMinutes('');
+      setSeconds('');
     }
   };
 
-  // Метод для обработки изменения текстового поля
-  onLabelChange = (e) => {
-    this.setState({ text: e.target.value });
-  };
+  const onLabelChange = (e) => setText(e.target.value);
+  const onMinutesChange = (e) => setMinutes(e.target.value);
+  const onSecondsChange = (e) => setSeconds(e.target.value);
 
-  render() {
-    return (
-      <form onSubmit={this.onSubmit} className="new-todo-form">
-        <input
-          className="new-todo"
-          type="text"
-          placeholder="What needs to be done?"
-          value={this.state.text}
-          onChange={this.onLabelChange}
-        />
-      </form>
-    );
-  }
-}
+  return (
+    <form onSubmit={onSubmit} className="new-todo-form">
+      <input
+        className="new-todo"
+        type="text"
+        placeholder="What needs to be done?"
+        value={text}
+        onChange={onLabelChange}
+      />
+      <input
+        className="new-todo-form__timer"
+        placeholder="Min"
+        value={minutes}
+        onChange={onMinutesChange}
+      />
+      <input
+        className="new-todo-form__timer"
+        placeholder="Sec"
+        value={seconds}
+        onChange={onSecondsChange}
+      />
+      <button type="submit"></button> 
+    </form>
+  );
+};
 
 export default NewTaskForm;

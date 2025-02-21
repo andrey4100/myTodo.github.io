@@ -1,36 +1,38 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import './TaskFilter.css';
 
-class TaskFilter extends Component {
-  static propTypes = {
+const TaskFilter = ({ filter, onFilterChange }) => {
+
+  TaskFilter.propTypes = {
     filter: PropTypes.oneOf(['all', 'active', 'completed']),
     onFilterChange: PropTypes.func,
   };
 
-  render() {
-    const { filter, onFilterChange } = this.props;
+  const handleClick = (newFilter) => {
+    onFilterChange(newFilter);
+  };
 
-    return (
-      <ul className="filters">
-        <li>
-          <button className={filter === 'all' ? 'selected' : ''} onClick={() => onFilterChange('all')}>
-            All
-          </button>
-        </li>
-        <li>
-          <button className={filter === 'active' ? 'selected' : ''} onClick={() => onFilterChange('active')}>
-            Active
-          </button>
-        </li>
-        <li>
-          <button className={filter === 'completed' ? 'selected' : ''} onClick={() => onFilterChange('completed')}>
-            Completed
-          </button>
-        </li>
-      </ul>
-    );
-  }
-}
+  return (
+    <ul className="filters">
+      <li>
+        <button className={filter === 'all' ? 'selected' : ''} onClick={() => handleClick('all')}>
+          All
+        </button>
+      </li>
+      <li>
+        <button className={filter === 'active' ? 'selected' : ''} onClick={() => handleClick('active')}>
+          Active
+        </button>
+      </li>
+      <li>
+        <button className={filter === 'completed' ? 'selected' : ''} onClick={() => handleClick('completed')}>
+          Completed
+        </button>
+      </li>
+    </ul>
+  );
+};
+
 export default TaskFilter;

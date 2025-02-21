@@ -1,20 +1,26 @@
-import React from 'react';
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import { formatDistanceToNow } from 'date-fns';
-import { ru } from 'date-fns/locale';
+import { enGB } from 'date-fns/locale';
 
 import './Task.css';
 
-class Task extends React.Component {
-  static defaultProps = {
+const Task = ({ id, label, completed, editing, time, onToggleCompleted, onEdit, onDelete, onLabelChange, isRunning, elapsedTime, toggleTimer }) => {
+
+  const [newLabel, setNewLabel] = useState(label);
+  const editInputRef = useRef(null); 
+
+
+  Task.defaultProps = {
     onToggleCompleted: () => {},
     onEdit: () => {},
     onDelete: () => {},
     onLabelChange: () => {},
   };
-
-  static propTypes = {
+  
+  Task.propTypes = {
     id: PropTypes.number,
     label: PropTypes.string,
     completed: PropTypes.bool,
@@ -26,59 +32,85 @@ class Task extends React.Component {
     onLabelChange: PropTypes.func,
   };
 
-  // Инициализация состояния компонента
-  state = { newLabel: this.props.label };
+  useEffect(() => {
+    if (editing && editInputRef.current) {
+      editInputRef.current.focus();
+    }
+  }, [editing]);
 
-  // Обработка отправки формы редактирования
-  editSubmit = (e) => {
-    e.preventDefault();
-    if (this.state.newLabel.trim()) {
-      this.props.onLabelChange(this.state.newLabel); // Сохраняем значение
-      this.props.onEdit();
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (editing && editInputRef.current && !editInputRef.current.contains(event.target)) { // Добавлена проверка editing
+      onEdit(id); // Вызываем onEdit, чтобы выйти из режима редактирования
     }
   };
 
-  // Метод для обработки изменения текстового поля во время редактирования
-  editChange = (e) => this.setState({ newLabel: e.target.value });
+  document.addEventListener("mousedown", handleClickOutside);
 
-  // Метод для обработки нажатия клавиши "Enter"
-  onKeyDown = (e) => {
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [editing, onEdit, id]);
+
+
+  const editSubmit = () => { 
+    if (newLabel.trim()) {
+      onLabelChange(id, newLabel); 
+      onEdit(id); 
+    }
+  };
+
+  const editChange = (e) => setNewLabel(e.target.value);
+
+  const onKeyDown = (e) => {
     if (e.key === 'Enter') {
-      this.editSubmit(e);
+      editSubmit(); 
+    }
+    if (e.key === 'Escape') {
+      onEdit(id); 
     }
   };
 
-  onClickTask = () => {
-    this.props.onToggleCompleted(this.props.id);
+  const onClickTask = () => {
+    onToggleCompleted(id);
   };
 
-  render() {
-    const { label, completed, editing, time, onToggleCompleted, onEdit, onDelete } = this.props;
-    const createdAgo = formatDistanceToNow(time, { addSuffix: true, locale: ru });
-    const { newLabel } = this.state;
+  const formatTime = (timeInSeconds) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
 
-    return (
-      <li className={`${completed ? 'completed' : ''} ${editing ? 'editing' : ''}`}>
-        <div className="view">
-          <input
-            className="toggle"
-            type="checkbox"
-            checked={completed}
-            onChange={onToggleCompleted}
-            id={`${this.props.id}`}
+  const createdAgo = formatDistanceToNow(time, { addSuffix: true, locale: enGB });
+
+  return (
+    <li className={`${completed ? 'completed' : ''} ${editing ? 'editing' : ''}`}>
+      <div className="view">
+        <input className="toggle" type="checkbox" checked={completed} onChange={onToggleCompleted} onClick={onClickTask} id={`${id}`} />
+        <label>
+          <label className="title" onClick={onClickTask}>{label}</label>
+          <span className="description">
+          <button className="icon icon-play" onClick={() => toggleTimer(id)} disabled={isRunning}></button>
+          <button className="icon icon-pause" onClick={() => toggleTimer(id)} disabled={!isRunning}></button>
+          {formatTime(elapsedTime)}
+          </span>
+          <span className="description">{createdAgo}</span>
+        </label>
+        <button className="icon icon-edit" onClick={() => onEdit(id)}></button> 
+        <button className="icon icon-destroy" onClick={() => onDelete(id)}></button> 
+      </div>
+      {editing ? (
+      <input 
+          type="text" 
+          className="edit" 
+          value={newLabel} 
+          onChange={editChange} 
+          onKeyDown={onKeyDown}
+          ref={editInputRef} 
           />
-          <label>
-            <span className="description">{label}</span>
-            <button onClick={this.onClickTask}></button>
-            <span className="created">{createdAgo}</span>
-          </label>
-          <button className="icon icon-edit" onClick={onEdit}></button>
-          <button className="icon icon-destroy" onClick={onDelete}></button>
-        </div>
-        <input type="text" className="edit" value={newLabel} onChange={this.editChange} onKeyDown={this.onKeyDown} />
-      </li>
-    );
-  }
-}
+        ) : null}
+    </li>
+  )
+};
 
 export default Task;

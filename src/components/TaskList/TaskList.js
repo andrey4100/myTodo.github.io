@@ -1,19 +1,20 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import './TaskList.css';
 
 import Task from '../Task';
 
-class TaskList extends Component {
-  static defaultProps = {
+const TaskList = ({ todos, onToggleCompleted, onEdit, onDelete, onLabelChange,  toggleTimer }) => {
+
+  TaskList.defaultProps = {
     onToggleCompleted: () => {},
     onEdit: () => {},
     onDelete: () => {},
     onLabelChange: () => {},
   };
-
-  static propTypes = {
+  
+  TaskList.propTypes = {
     todos: PropTypes.arrayOf(PropTypes.object),
     onToggleCompleted: PropTypes.func,
     onEdit: PropTypes.func,
@@ -21,23 +22,23 @@ class TaskList extends Component {
     onLabelChange: PropTypes.func,
   };
 
-  render() {
-    const { todos, onToggleCompleted, onEdit, onDelete, onLabelChange } = this.props;
-    return (
-      <ul className="todo-list">
-        {todos.map((todo) => (
-          <Task
-            key={todo.id}
-            {...todo}
-            onToggleCompleted={() => onToggleCompleted(todo.id)}
-            onEdit={() => onEdit(todo.id)}
-            onDelete={() => onDelete(todo.id)}
-            onLabelChange={(newLabel) => onLabelChange(todo.id, newLabel)}
-          />
-        ))}
-      </ul>
-    );
-  }
-}
+  return (
+    <ul className="todo-list">
+      {todos.map((todo) => (
+        <Task
+          key={todo.id}
+          {...todo}
+          onToggleCompleted={onToggleCompleted}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          onLabelChange={onLabelChange}
+          toggleTimer={toggleTimer}
+        />
+      ))}
+    </ul>
+  );
+};
+
+
 
 export default TaskList;

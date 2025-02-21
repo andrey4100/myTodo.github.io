@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import NewTaskForm from '../NewTaskForm';
 import TaskList from '../TaskList';
@@ -6,67 +6,78 @@ import Footer from '../Footer';
 
 import './App.css';
 
-class App extends Component {
-  // Инициализируем состояние компонента
-  state = {
-    todos: [
-      { id: 1, label: 'HTML, CSS', completed: true, editing: false, time: new Date() },
-      { id: 2, label: 'JS', completed: true, editing: false, time: new Date() },
-      { id: 3, label: 'React', completed: false, editing: false, time: new Date() },
-    ],
-    filter: 'all',
-  };
+const App = () => {
+  const [todos, setTodos] = useState([
+    { id: 1, label: 'HTML, CSS', completed: true, editing: false, time: new Date(), totalSeconds: 60, isRunning: false, elapsedTime: 0, timerDirection: 'down' },
+    { id: 2, label: 'JS', completed: true, editing: false, time: new Date(), totalSeconds: 120, isRunning: false, elapsedTime: 0, timerDirection: 'down' },
+    { id: 3, label: 'React', completed: false, editing: false, time: new Date(), totalSeconds: 0, isRunning: false, elapsedTime: 120, timerDirection: 'down' },
+  ]);
+  const [filter, setFilter] = useState('all');
 
-  // Метод для добавления новой задачи (стрелочная функция, чтобы не ипользовать "bind")
-  addTask = (label) => {
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTodos(prevTodos => prevTodos.map(todo => {
+        if (todo.isRunning) {
+          if (todo.timerDirection === 'down') {
+            if (todo.elapsedTime > 0) {
+              return { ...todo, elapsedTime: todo.elapsedTime - 1 };
+            } 
+              return { ...todo, elapsedTime: 0, timerDirection: 'up' };
+          } 
+            return { ...todo, elapsedTime: todo.elapsedTime + 1 };
+        }
+        return todo;
+      }));
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
+
+
+  const addTask = (label, totalSeconds) => {
     const newTask = {
       id: Date.now(),
       label,
       completed: false,
       editing: false,
       time: new Date(),
+      totalSeconds: totalSeconds || 0,
+      isRunning: false,
+      elapsedTime: totalSeconds || 0,
+      timerDirection: 'down', // Initialize timer direction
     };
-    this.setState((prevState) => ({ todos: [...prevState.todos, newTask] }));
+    setTodos((prevTodos) => [...prevTodos, newTask]);
   };
 
-  // Метод для переключения статуса выполнения задачи
-  toggleCompleted = (id) => {
-    this.setState((prevState) => ({
-      todos: prevState.todos.map((todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo)),
-    }));
+
+  const toggleCompleted = (id) => {
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed, totalSeconds: 0, isRunning: false, elapsedTime: 0, timerDirection: 'down' } : todo
+      )
+    );
   };
 
-  // Метод для переключения статуса редактирования задачи
-  editTask = (id) => {
-    this.setState((prevState) => ({
-      todos: prevState.todos.map((todo) => (todo.id === id ? { ...todo, editing: !todo.editing } : todo)),
-    }));
+  const editTask = (id) => {
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) => (todo.id === id ? { ...todo, editing: !todo.editing } : todo))
+    );
   };
 
-  // Метод для удаления задачи
-  deleteTask = (id) => {
-    this.setState((prevState) => ({ todos: prevState.todos.filter((todo) => todo.id !== id) }));
+  const deleteTask = (id) => {
+    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
   };
 
-  // Метод для изменения текста таски
-  changeTaskLabel = (id, newLabel) =>
-    this.setState((prevState) => ({
-      todos: prevState.todos.map((todo) => (todo.id === id ? { ...todo, label: newLabel } : todo)),
-    }));
-
-  // Метод для изменения фильтра
-  setFilter = (filter) => {
-    this.setState({ filter });
+  const changeTaskLabel = (id, newLabel) => {
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) => (todo.id === id ? { ...todo, label: newLabel } : todo))
+    );
   };
 
-  // Метод для очистки завершенных задач
-  removeCompletedTasks = () => {
-    this.setState((prevState) => ({ todos: prevState.todos.filter((todo) => !todo.completed) }));
+  const removeCompletedTasks = () => {
+    setTodos((prevTodos) => prevTodos.filter((todo) => !todo.completed));
   };
 
-  // Метод для фильтрации задач
-  getFilteredTodos = () => {
-    const { todos, filter } = this.state;
+  const getFilteredTodos = () => {
     if (filter === 'active') {
       return todos.filter((todo) => !todo.completed);
     }
@@ -76,33 +87,48 @@ class App extends Component {
     return todos;
   };
 
-  render() {
-    const filteredTodos = this.getFilteredTodos();
 
-    return (
-      <section className="todoapp">
-        <header className="header">
-          <h1>Todos</h1>
-          <NewTaskForm onAddTask={this.addTask} />
-        </header>
-        <section className="main">
-          <TaskList
-            todos={filteredTodos}
-            onToggleCompleted={this.toggleCompleted}
-            onEdit={this.editTask}
-            onDelete={this.deleteTask}
-            onLabelChange={this.changeTaskLabel}
-          />
-          <Footer
-            todos={this.state.todos}
-            filter={this.state.filter}
-            onFilterChange={this.setFilter}
-            onClearCompleted={this.removeCompletedTasks}
-          />
-        </section>
+
+  const toggleTimer = (id) => {
+    setTodos(prevTodos => prevTodos.map(todo => {
+      if (todo.id === id) {
+        let newDirection = todo.timerDirection;
+        if (todo.elapsedTime === 0 && !todo.isRunning) {
+          newDirection = 'up';
+        }
+        return { ...todo, isRunning: !todo.isRunning, timerDirection: newDirection };
+      }
+      return todo;
+    }));
+  };
+
+
+  const filteredTodos = getFilteredTodos();
+
+  return (
+    <section className="todoapp">
+      <header className="header">
+        <h1>Todos</h1>
+        <NewTaskForm onAddTask={addTask} />
+      </header>
+      <section className="main">
+        <TaskList
+          todos={filteredTodos}
+          onToggleCompleted={toggleCompleted}
+          onEdit={editTask}
+          onDelete={deleteTask}
+          onLabelChange={changeTaskLabel}
+          toggleTimer={toggleTimer}
+        />
+        <Footer
+          todos={todos}
+          filter={filter}
+          onFilterChange={setFilter}
+          onClearCompleted={removeCompletedTasks}
+        />
       </section>
-    );
-  }
-}
+    </section>
+  );
+};
 
 export default App;
