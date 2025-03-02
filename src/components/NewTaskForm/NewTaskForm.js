@@ -26,18 +26,18 @@ const NewTaskForm = ({ onAddTask }) => {
 
   const onLabelChange = (e) => setText(e.target.value);
   const onMinutesChange = (e) => {
-    const {value} = e.target;
+    const { value } = e.target;
     if (/^\d*$/.test(value)) {
-      if (value.length <= 2) { 
+      if (value.length <= 2) {
         setMinutes(value);
       }
     }
   };
-  
+
   const onSecondsChange = (e) => {
-    const {value} = e.target;
+    const { value } = e.target;
     if (/^\d*$/.test(value)) {
-      if (value.length <= 2) { 
+      if (value.length <= 2) {
         setSeconds(value);
       }
     }
