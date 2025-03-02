@@ -7,11 +7,22 @@ import { enGB } from 'date-fns/locale';
 
 import './Task.css';
 
-const Task = ({ id, label, completed, editing, time, onToggleCompleted, onEdit, onDelete, onLabelChange, isRunning, elapsedTime, toggleTimer }) => {
-
+const Task = ({
+  id,
+  label,
+  completed,
+  editing,
+  time,
+  onToggleCompleted,
+  onEdit,
+  onDelete,
+  onLabelChange,
+  isRunning,
+  elapsedTime,
+  toggleTimer,
+}) => {
   const [newLabel, setNewLabel] = useState(label);
-  const editInputRef = useRef(null); 
-
+  const editInputRef = useRef(null);
 
   Task.defaultProps = {
     onToggleCompleted: () => {},
@@ -19,7 +30,7 @@ const Task = ({ id, label, completed, editing, time, onToggleCompleted, onEdit, 
     onDelete: () => {},
     onLabelChange: () => {},
   };
-  
+
   Task.propTypes = {
     id: PropTypes.number,
     label: PropTypes.string,
@@ -38,25 +49,25 @@ const Task = ({ id, label, completed, editing, time, onToggleCompleted, onEdit, 
     }
   }, [editing]);
 
-useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (editing && editInputRef.current && !editInputRef.current.contains(event.target)) { // Добавлена проверка editing
-      onEdit(id); // Вызываем onEdit, чтобы выйти из режима редактирования
-    }
-  };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (editing && editInputRef.current && !editInputRef.current.contains(event.target)) {
+        // Добавлена проверка editing
+        onEdit(id); // Вызываем onEdit, чтобы выйти из режима редактирования
+      }
+    };
 
-  document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
 
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, [editing, onEdit, id]);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [editing, onEdit, id]);
 
-
-  const editSubmit = () => { 
+  const editSubmit = () => {
     if (newLabel.trim()) {
-      onLabelChange(id, newLabel); 
-      onEdit(id); 
+      onLabelChange(id, newLabel);
+      onEdit(id);
     }
   };
 
@@ -64,10 +75,10 @@ useEffect(() => {
 
   const onKeyDown = (e) => {
     if (e.key === 'Enter') {
-      editSubmit(); 
+      editSubmit();
     }
     if (e.key === 'Escape') {
-      onEdit(id); 
+      onEdit(id);
     }
   };
 
@@ -86,31 +97,40 @@ useEffect(() => {
   return (
     <li className={`${completed ? 'completed' : ''} ${editing ? 'editing' : ''}`}>
       <div className="view">
-        <input className="toggle" type="checkbox" checked={completed} onChange={onToggleCompleted} onClick={onClickTask} id={`${id}`} />
+        <input
+          className="toggle"
+          type="checkbox"
+          checked={completed}
+          onChange={onToggleCompleted}
+          onClick={onClickTask}
+          id={`${id}`}
+        />
         <label>
-          <label className="title" onClick={onClickTask}>{label}</label>
+          <label className="title" onClick={onClickTask}>
+            {label}
+          </label>
           <span className="description">
-          <button className="icon icon-play" onClick={() => toggleTimer(id)} disabled={isRunning}></button>
-          <button className="icon icon-pause" onClick={() => toggleTimer(id)} disabled={!isRunning}></button>
-          {formatTime(elapsedTime)}
+            <button className="icon icon-play" onClick={() => toggleTimer(id)} disabled={isRunning}></button>
+            <button className="icon icon-pause" onClick={() => toggleTimer(id)} disabled={!isRunning}></button>
+            {formatTime(elapsedTime)}
           </span>
           <span className="description">{createdAgo}</span>
         </label>
-        <button className="icon icon-edit" onClick={() => onEdit(id)}></button> 
-        <button className="icon icon-destroy" onClick={() => onDelete(id)}></button> 
+        <button className="icon icon-edit" onClick={() => onEdit(id)}></button>
+        <button className="icon icon-destroy" onClick={() => onDelete(id)}></button>
       </div>
       {editing ? (
-      <input 
-          type="text" 
-          className="edit" 
-          value={newLabel} 
-          onChange={editChange} 
+        <input
+          type="text"
+          className="edit"
+          value={newLabel}
+          onChange={editChange}
           onKeyDown={onKeyDown}
-          ref={editInputRef} 
-          />
-        ) : null}
+          ref={editInputRef}
+        />
+      ) : null}
     </li>
-  )
+  );
 };
 
 export default Task;

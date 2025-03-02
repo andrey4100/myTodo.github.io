@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import './TaskFilter.css';
 
 const TaskFilter = ({ filter, onFilterChange }) => {
-
   TaskFilter.propTypes = {
     filter: PropTypes.oneOf(['all', 'active', 'completed']),
     onFilterChange: PropTypes.func,

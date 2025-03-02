@@ -5,15 +5,14 @@ import './TaskList.css';
 
 import Task from '../Task';
 
-const TaskList = ({ todos, onToggleCompleted, onEdit, onDelete, onLabelChange,  toggleTimer }) => {
-
+const TaskList = ({ todos, onToggleCompleted, onEdit, onDelete, onLabelChange, toggleTimer }) => {
   TaskList.defaultProps = {
     onToggleCompleted: () => {},
     onEdit: () => {},
     onDelete: () => {},
     onLabelChange: () => {},
   };
-  
+
   TaskList.propTypes = {
     todos: PropTypes.arrayOf(PropTypes.object),
     onToggleCompleted: PropTypes.func,
@@ -38,7 +37,5 @@ const TaskList = ({ todos, onToggleCompleted, onEdit, onDelete, onLabelChange,  
     </ul>
   );
 };
-
-
 
 export default TaskList;

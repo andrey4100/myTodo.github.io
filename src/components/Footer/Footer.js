@@ -6,7 +6,6 @@ import TaskFilter from '../TaskFilter';
 import './Footer.css';
 
 const Footer = ({ todos, filter, onFilterChange, onClearCompleted }) => {
-
   Footer.propTypes = {
     todos: PropTypes.arrayOf(PropTypes.object),
     filter: PropTypes.oneOf(['all', 'active', 'completed']),

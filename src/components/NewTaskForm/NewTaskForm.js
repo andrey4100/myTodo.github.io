@@ -4,11 +4,9 @@ import PropTypes from 'prop-types';
 import './NewTaskForm.css';
 
 const NewTaskForm = ({ onAddTask }) => {
-
   NewTaskForm.propTypes = {
     onAddTask: PropTypes.func,
   };
-  
 
   const [text, setText] = useState('');
   const [minutes, setMinutes] = useState('');
@@ -27,8 +25,23 @@ const NewTaskForm = ({ onAddTask }) => {
   };
 
   const onLabelChange = (e) => setText(e.target.value);
-  const onMinutesChange = (e) => setMinutes(e.target.value);
-  const onSecondsChange = (e) => setSeconds(e.target.value);
+  const onMinutesChange = (e) => {
+    const {value} = e.target;
+    if (/^\d*$/.test(value)) {
+      if (value.length <= 2) { 
+        setMinutes(value);
+      }
+    }
+  };
+  
+  const onSecondsChange = (e) => {
+    const {value} = e.target;
+    if (/^\d*$/.test(value)) {
+      if (value.length <= 2) { 
+        setSeconds(value);
+      }
+    }
+  };
 
   return (
     <form onSubmit={onSubmit} className="new-todo-form">
@@ -39,19 +52,9 @@ const NewTaskForm = ({ onAddTask }) => {
         value={text}
         onChange={onLabelChange}
       />
-      <input
-        className="new-todo-form__timer"
-        placeholder="Min"
-        value={minutes}
-        onChange={onMinutesChange}
-      />
-      <input
-        className="new-todo-form__timer"
-        placeholder="Sec"
-        value={seconds}
-        onChange={onSecondsChange}
-      />
-      <button type="submit"></button> 
+      <input className="new-todo-form__timer" placeholder="Min" value={minutes} onChange={onMinutesChange} />
+      <input className="new-todo-form__timer" placeholder="Sec" value={seconds} onChange={onSecondsChange} />
+      <button type="submit"></button>
     </form>
   );
 };
